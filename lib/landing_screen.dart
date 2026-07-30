@@ -8,14 +8,9 @@ class LandingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-              'assets/images/sky_background.png',
-            ),
-            fit: BoxFit.cover,
-          ),
-        ),
+       decoration: const BoxDecoration(
+  color: Colors.white,
+),
         child: Center(
   child: Column(
     mainAxisSize: MainAxisSize.min,
@@ -53,7 +48,7 @@ class LandingScreen extends StatelessWidget {
 ),
         child:  TextField(
           decoration: InputDecoration(
-            hintText: 'Que Sera, Sera',
+            hintText: 'Search flight',
             contentPadding: EdgeInsets.symmetric(
   vertical: 18,
 ),

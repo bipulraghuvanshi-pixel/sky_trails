@@ -165,15 +165,9 @@ Future<void> getLocation() async {
   builder: (context) {
 return Container(
   decoration: BoxDecoration(
-    color: retroMode ? Colors.black : null,
-    image: retroMode
-        ? null
-        : const DecorationImage(
-            image: AssetImage(
-              'assets/images/sky_background.png',
-            ),
-            fit: BoxFit.cover,
-          ),
+    color: retroMode
+        ? Colors.black
+        : Colors.white,
   ),
   child: Center(
           child: SingleChildScrollView(
@@ -404,7 +398,7 @@ Text(
     
 
     Text(
-  '📍 Distance: ${nearbyPlanes[index].distance.toStringAsFixed(1) ?? '--'} km',
+  '📍 Distance: ${nearbyPlanes[index].distance.toStringAsFixed(1)} km',
   style: TextStyle(
     color: retroMode
         ? Colors.greenAccent
