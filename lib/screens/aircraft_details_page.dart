@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/aircraft.dart';
-
-const testAircraftDetails = "OK";
+import 'widgets/aircraft_detail_tile.dart';
 
 class AircraftDetailsPage extends StatelessWidget {
   final Aircraft plane;
@@ -17,9 +16,11 @@ class AircraftDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor:
-          retroMode ? Colors.black : const Color(0xFFEAF3FF),
+          retroMode ? Colors.black : Colors.white,
       appBar: AppBar(
-        backgroundColor: retroMode ? Colors.black : null,
+        elevation: 0,
+        backgroundColor:
+            retroMode ? Colors.black : Colors.white,
         iconTheme: IconThemeData(
           color: retroMode
               ? Colors.greenAccent
@@ -34,10 +35,11 @@ class AircraftDetailsPage extends StatelessWidget {
           ),
         ),
       ),
-      body: Center(
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(height: 24),
+
             Text(
               '✈ ${plane.callsign}',
               style: TextStyle(
@@ -46,108 +48,85 @@ class AircraftDetailsPage extends StatelessWidget {
                 color: retroMode
                     ? Colors.greenAccent
                     : Colors.black,
-                shadows: retroMode
-                    ? const [
-                        Shadow(
-                          color: Colors.greenAccent,
-                          blurRadius: 25,
-                        ),
-                      ]
-                    : [],
               ),
             ),
-            const SizedBox(height: 20),
+
+            const SizedBox(height: 8),
+
             Text(
               '🌍 ${plane.country}',
               style: TextStyle(
+                fontSize: 18,
                 color: retroMode
                     ? Colors.greenAccent
-                    : Colors.black,
+                    : Colors.grey,
               ),
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 20),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: retroMode
-                      ? Colors.greenAccent
-                      : Colors.black26,
-                  width: 1,
+
+            const SizedBox(height: 24),
+
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'CALL : ${plane.callsign}',
-                    style: TextStyle(
-                      color: retroMode
-                          ? Colors.greenAccent
-                          : Colors.black87,
-                      fontSize: 18,
-                    ),
+                  AircraftDetailTile(
+                    icon: Icons.sell_outlined,
+                    title: 'CALL SIGN',
+                    value: plane.callsign,
+                    retroMode: retroMode,
+                  
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'CNTR : ${plane.country}',
-                    style: TextStyle(
-                      color: retroMode
-                          ? Colors.greenAccent
-                          : Colors.black87,
-                      fontSize: 18,
-                    ),
+
+                  AircraftDetailTile(
+                    icon: Icons.flag_outlined,
+                    title: 'COUNTRY',
+                    value: plane.country,
+                    retroMode: retroMode,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'ALT  : ${plane.altitude?.toStringAsFixed(0) ?? '--'} M',
-                    style: TextStyle(
-                      color: retroMode
-                          ? Colors.greenAccent
-                          : Colors.black87,
-                      fontSize: 18,
-                    ),
+
+                  AircraftDetailTile(
+                    icon: Icons.flight_takeoff,
+                    title: 'ALTITUDE',
+                    value:
+                        '${plane.altitude?.toStringAsFixed(0) ?? '--'} M',
+                        retroMode: retroMode,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'SPD  : ${plane.speed.toStringAsFixed(0)} KM/H',
-                    style: TextStyle(
-                      color: retroMode
-                          ? Colors.greenAccent
-                          : Colors.black87,
-                      fontSize: 18,
-                    ),
+
+                  AircraftDetailTile(
+                    icon: Icons.speed,
+                    title: 'SPEED',
+                    value:
+                        '${plane.speed.toStringAsFixed(0)} KM/H',
+                        retroMode: retroMode,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'DST  : ${plane.distance.toStringAsFixed(1)} KM',
-                    style: TextStyle(
-                      color: retroMode
-                          ? Colors.greenAccent
-                          : Colors.black87,
-                      fontSize: 18,
-                    ),
+
+                  AircraftDetailTile(
+                    icon: Icons.near_me_outlined,
+                    title: 'DISTANCE',
+                    value:
+                        '${plane.distance.toStringAsFixed(1)} KM',
+                        retroMode: retroMode,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'LAT  : ${plane.latitude.toStringAsFixed(4)}',
-                    style: TextStyle(
-                      color: retroMode
-                          ? Colors.greenAccent
-                          : Colors.black87,
-                      fontSize: 18,
-                    ),
+
+                  AircraftDetailTile(
+                    icon: Icons.location_on_outlined,
+                    title: 'LATITUDE',
+                    value:
+                        plane.latitude.toStringAsFixed(4),
+                        retroMode: retroMode,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'LON  : ${plane.longitude.toStringAsFixed(4)}',
-                    style: TextStyle(
-                      color: retroMode
-                          ? Colors.greenAccent
-                          : Colors.black87,
-                      fontSize: 18,
-                    ),
+
+                  AircraftDetailTile(
+                    icon: Icons.public,
+                    title: 'LONGITUDE',
+                    value:
+                        plane.longitude.toStringAsFixed(4),
+                        retroMode: retroMode,
                   ),
+
+                  const SizedBox(height: 24),
                 ],
               ),
             ),

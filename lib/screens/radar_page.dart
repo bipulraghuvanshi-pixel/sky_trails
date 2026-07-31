@@ -28,8 +28,15 @@ class RadarPage extends StatelessWidget {
   backgroundColor:
       retroMode ? Colors.black : Colors.white,
       appBar: AppBar(
-  backgroundColor:
-      retroMode ? Colors.black : null,
+  backgroundColor: retroMode
+      ? Colors.black
+      : Colors.white,
+
+  surfaceTintColor: Colors.transparent,
+
+  elevation: 0,
+
+  scrolledUnderElevation: 0,
 
   iconTheme: IconThemeData(
     color: retroMode
@@ -38,8 +45,8 @@ class RadarPage extends StatelessWidget {
   ),
 
   title: Text(
-  'Radar (${nearbyPlanes.length})',
-  style: TextStyle(
+    'Radar (${nearbyPlanes.length})',
+    style: TextStyle(
       color: retroMode
           ? Colors.greenAccent
           : Colors.black,
