@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/services.dart';
 
 import 'models/aircraft.dart';
 import 'screens/aircraft_details_page.dart';
@@ -10,6 +11,8 @@ import 'services/aircraft_service.dart';
 import 'widgets/actions/action_card.dart';
 import 'widgets/aircraft/aircraft_card.dart';
 import 'package:sky_trails/screens/splash/sky_trails_splash_screen.dart';
+import 'services/location_service.dart';
+import 'widgets/sky/sky_background.dart';
 
 void main() {
   runApp(
@@ -28,12 +31,13 @@ class SkyTrailsApp extends StatefulWidget {
 }
 
 class _SkyTrailsAppState extends State<SkyTrailsApp> {
-  bool retroMode = false;
+  
 
   String locationText = "Getting location...";
   String lastUpdated = "--";
 
   final AircraftService aircraftService = const AircraftService();
+  final LocationService locationService = const LocationService();
 
   double? userLat;
   double? userLon;
@@ -43,18 +47,21 @@ class _SkyTrailsAppState extends State<SkyTrailsApp> {
   List<Aircraft> nearbyPlanes = [];
 
   @override
-  void initState() {
-    super.initState();
+void initState() {
+  super.initState();
 
-    loadData();
+  
 
-    refreshTimer = Timer.periodic(
-      const Duration(minutes: 30),
-      (timer) {
-        fetchAircraft();
-      },
-    );
-  }
+  loadData();
+
+  refreshTimer = Timer.periodic(
+    const Duration(minutes: 30),
+    (timer) {
+      fetchAircraft();
+    },
+  );
+}
+  
 
   @override
   void dispose() {
@@ -144,123 +151,74 @@ class _SkyTrailsAppState extends State<SkyTrailsApp> {
       debugShowCheckedModeBanner: false,
       title: 'Sky Trails',
       home: Scaffold(
-        backgroundColor:
-            retroMode ? Colors.black : const Color(0xFFF4F8FC),
+
+  extendBodyBehindAppBar: true,
+
+  backgroundColor: Colors.transparent,
 
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: retroMode
-                  ? Colors.greenAccent
-                  : Colors.black,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
 
-          backgroundColor:
-              retroMode ? Colors.black : Colors.white,
+  systemOverlayStyle: const SystemUiOverlayStyle(
 
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          scrolledUnderElevation: 0,
+    statusBarColor: Colors.transparent,
 
-          title: Text(
-            'Sky Trails',
-            style: TextStyle(
-              color: retroMode
-                  ? Colors.greenAccent
-                  : Colors.black,
-            ),
-          ),
-        ),
+    statusBarIconBrightness: Brightness.dark,
 
-        body: Builder(
-          builder: (context) {
-            return Container(
-              decoration: BoxDecoration(
-                color: retroMode
-                    ? Colors.black
-                    : Colors.white,
-              ),
+  ),
 
-              child: Center(
+
+  leading: IconButton(
+
+    icon: const Icon(
+
+      Icons.arrow_back,
+
+      color: Color(0xFF6FA8FF),
+
+    ),
+
+    onPressed: () {
+
+      Navigator.pop(context);
+
+    },
+
+  ),
+
+
+  backgroundColor: Colors.transparent,
+
+  surfaceTintColor: Colors.transparent,
+
+  elevation: 0,
+
+  scrolledUnderElevation: 0,
+
+),
+
+        body: SkyBackground(
+  child: Builder(
+    builder: (context) {
+      return Container(
+
+  color: Colors.transparent,
+
+  child: Center(
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
 
                     children: [
-                      const SizedBox(height: 70),
 
-                      SizedBox(
-                        width: 180,
-                        height: 180,
+  const SizedBox(height: 2),
 
-                        child: Stack(
-                          alignment: Alignment.center,
-
-                          children: [
-                                                        Container(
-                              width: 180,
-                              height: 180,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: retroMode
-                                      ? Colors.greenAccent
-                                      : Colors.blue.shade50,
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-
-                            Container(
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: retroMode
-                                      ? Colors.green
-                                      : Colors.blue.shade200,
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-
-                            IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  retroMode = !retroMode;
-                                });
-                              },
-                              icon: Icon(
-                                retroMode
-                                    ? Icons.flight
-                                    : Icons.radar,
-                                size: 40,
-                                color: retroMode
-                                    ? Colors.greenAccent
-                                    : Colors.blue,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      Text(
-                        'Over You',
+  Text(
+    'Over You',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.4,
-                          color: retroMode
-                              ? Colors.greenAccent
-                              : Colors.black,
+                          color: const Color(0xFF0F172A),
                         ),
                       ),
 
@@ -321,7 +279,7 @@ Padding(
           icon: Icons.radar,
           title: 'Radar',
           subtitle: 'View on map',
-          retroMode: retroMode,
+          
           onTap: () {
             if (userLat == null || userLon == null) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -336,11 +294,10 @@ Padding(
               context,
               MaterialPageRoute(
                 builder: (_) => RadarPage(
-                  nearbyPlanes: nearbyPlanes,
-                  userLat: userLat!,
-                  userLon: userLon!,
-                  retroMode: retroMode,
-                ),
+ nearbyPlanes: nearbyPlanes,
+ userLat: userLat!,
+ userLon: userLon!,
+),
               ),
             );
           },
@@ -354,7 +311,7 @@ Padding(
           icon: Icons.refresh_rounded,
           title: 'Refresh',
           subtitle: 'Update now',
-          retroMode: retroMode,
+          
           onTap: () async {
             await fetchAircraft();
           },
@@ -374,9 +331,7 @@ Padding(
         style: TextStyle(
   fontSize: 20,
   fontWeight: FontWeight.bold,
-  color: retroMode
-      ? Colors.greenAccent
-      : const Color(0xFF0F172A),
+  color: const Color(0xFF0F172A),
 ),
       ),
 
@@ -386,9 +341,7 @@ Padding(
           vertical: 6,
         ),
         decoration: BoxDecoration(
-          color: retroMode
-    ? const Color(0xFF18311E)
-    : const Color(0xFFEAF3FF),
+          color: const Color(0xFFEAF3FF),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -396,9 +349,7 @@ Padding(
           style: TextStyle(
   fontSize: 15,
   fontWeight: FontWeight.bold,
-  color: retroMode
-      ? Colors.greenAccent
-      : const Color(0xFF2F80ED),
+  
 ),
         ),
       ),
@@ -415,15 +366,13 @@ const SizedBox(height: 14),
                         itemBuilder: (context, index) {
                           return AircraftCard(
   plane: nearbyPlanes[index],
-  retroMode: retroMode,
   onTap: () {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => AircraftDetailsPage(
-          plane: nearbyPlanes[index],
-          retroMode: retroMode,
-        ),
+  plane: nearbyPlanes[index],
+),
       ),
     );
   },
@@ -438,6 +387,7 @@ const SizedBox(height: 14),
             );
           },
         ),
+      ),
       ),
     );
   }

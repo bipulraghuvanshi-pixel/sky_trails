@@ -1,196 +1,471 @@
-
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
 import 'aircraft_details_page.dart';
 import '../models/aircraft.dart';
+import '../widgets/sky/sky_background.dart';
 
 
+class RadarPage extends StatefulWidget {
 
-
-class RadarPage extends StatelessWidget {
   final List<Aircraft> nearbyPlanes;
   final double userLat;
   final double userLon;
-  final bool retroMode;
+
 
   const RadarPage({
-  super.key,
-  required this.nearbyPlanes,
-  required this.userLat,
-  required this.userLon,
-  required this.retroMode,
-});
+
+    super.key,
+
+    required this.nearbyPlanes,
+    required this.userLat,
+    required this.userLon,
+
+  });
+
+
+  @override
+  State<RadarPage> createState() =>
+      _RadarPageState();
+
+}
+
+
+
+class _RadarPageState extends State<RadarPage>
+    with SingleTickerProviderStateMixin {
+
+
+  late AnimationController _controller;
+
+
+
+  @override
+  void initState() {
+
+    super.initState();
+
+
+    _controller = AnimationController(
+
+      vsync: this,
+
+      duration: const Duration(
+        seconds: 8,
+      ),
+
+    );
+
+
+    _controller.forward();
+
+  }
+
+
+
+  @override
+  void dispose() {
+
+    _controller.dispose();
+
+    super.dispose();
+
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
-    print('Planes received: ${nearbyPlanes.length}');
+
+
+    final screenSize =
+        MediaQuery.of(context).size;
+
+
+    final centerX =
+        screenSize.width / 2;
+
+
+    final centerY =
+        screenSize.height / 2;
+
+
+
     return Scaffold(
-  backgroundColor:
-      retroMode ? Colors.black : Colors.white,
+
+      extendBodyBehindAppBar: true,
+
+      backgroundColor: Colors.transparent,
+
+
       appBar: AppBar(
-  backgroundColor: retroMode
-      ? Colors.black
-      : Colors.white,
 
-  surfaceTintColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
 
-  elevation: 0,
+        surfaceTintColor: Colors.transparent,
 
-  scrolledUnderElevation: 0,
+        elevation: 0,
 
-  iconTheme: IconThemeData(
-    color: retroMode
-        ? Colors.greenAccent
-        : Colors.black,
-  ),
+        scrolledUnderElevation: 0,
 
-  title: Text(
-    'Radar (${nearbyPlanes.length})',
-    style: TextStyle(
-      color: retroMode
-          ? Colors.greenAccent
-          : Colors.black,
-    ),
-  ),
-),
- body: Center(
 
-   
-        child: SizedBox(
-    width: 350,
-    height: 350,
-    child: Stack(
-      alignment: Alignment.center,
-      children: [
-        Positioned(
-  child: Container(
-    width: 2,
-    height: 350,
-    color: Colors.greenAccent.withValues(alpha: 0.3),
-  ),
-),
+        iconTheme: const IconThemeData(
 
-Positioned(
-  child: Container(
-    width: 350,
-    height: 2,
-    color: Colors.greenAccent.withValues(alpha: 0.3),
-  ),
-),
-        Container(
-  width: 230,
-  height: 230,
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    border: Border.all(
-      color: retroMode
-    ? Colors.green
-    : Colors.grey,
-      width: 1,
-    ),
-  ),
-),
-Container(
-  width: 290,
-  height: 290,
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    border: Border.all(
-  color: retroMode
-      ? Colors.greenAccent
-      : Colors.black12,
-  width: 1,
-),
-  ),
-),
-        Container(
-  width: 350,
-  height: 350,
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    border: Border.all(
-      color: Colors.greenAccent.withValues(alpha: 0.7),
-      width: 3,
-    ),
-   
-  ),
-),
-   ...nearbyPlanes.map((plane) {
-    double latDiff = plane.latitude - userLat;
-double lonDiff = plane.longitude - userLon;
-  return Positioned(
-  top: 175 - (latDiff * 40),
-  left: 175 + (lonDiff * 40),
- child: InkWell(
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AircraftDetailsPage(
-          plane: plane,
-          retroMode: retroMode,
+          color: Color(0xFF0F172A),
+
         ),
-      ),
-    );
-  },
-  child: Column(
-  mainAxisSize: MainAxisSize.min,
-  children: [
-
-    Text(
-      plane.callsign,
-      style: TextStyle(
-        color: retroMode
-            ? Colors.greenAccent
-            : Colors.black,
-        fontSize: 8,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
 
 
- Container(
-  decoration: BoxDecoration(
-    boxShadow: [
-      BoxShadow(
-        color: Colors.greenAccent,
-        blurRadius: 12,
-        spreadRadius: 2,
-      ),
-    ],
-  ),
- child: Transform.rotate(
-  angle: ((plane.heading ?? 0) * math.pi / 180),
-  child: Icon(
-    Icons.navigation,
-    color: retroMode
-        ? Colors.greenAccent
-        : Colors.orange,
-    size: 20,
-  ),
-),
-),
-  ],
-),
- ),
-   );
- }),
-          
-        
+        title: Text(
 
-                    Container(
-          width: 12,
-          height: 12,
-          decoration: const BoxDecoration(
-            color: Colors.green,
-            shape: BoxShape.circle,
+          'Radar (${widget.nearbyPlanes.length})',
+
+          style: const TextStyle(
+
+            color: Color(0xFF0F172A),
+
+            fontWeight: FontWeight.w600,
+
           ),
+
         ),
-      ],
-    ),
-  ),
-),
+
+      ),
+
+
+
+      body: SkyBackground(
+
+        child: AnimatedBuilder(
+
+          animation: _controller,
+
+
+          builder: (context, child) {
+
+
+            return Stack(
+
+              alignment: Alignment.center,
+
+
+              children: [
+
+
+
+                ...widget.nearbyPlanes.map((plane) {
+
+
+                  final double latDiff =
+                      plane.latitude -
+                      widget.userLat;
+
+
+                  final double lonDiff =
+                      plane.longitude -
+                      widget.userLon;
+
+
+
+                  final double baseTop =
+                      centerY -
+                      (latDiff * 40);
+
+
+
+                  final double baseLeft =
+                      centerX +
+                      (lonDiff * 40);
+
+
+
+
+                  final double progress =
+                      Curves.easeOutCubic.transform(
+                        _controller.value,
+                      );
+
+
+
+                  final double heading =
+                      (plane.heading ?? 0) *
+                      math.pi /
+                      180;
+
+
+
+                  final double glideX =
+                      math.sin(heading) *
+                      75 *
+                      progress;
+
+
+
+                  final double glideY =
+                      -math.cos(heading) *
+                      75 *
+                      progress;
+
+
+
+                  final double floatY =
+                      math.sin(
+                        _controller.value *
+                        math.pi *
+                        2,
+                      ) *
+                      3;
+
+
+
+
+                  return Positioned(
+
+                    top:
+                        baseTop +
+                        glideY +
+                        floatY,
+
+
+                    left:
+                        baseLeft +
+                        glideX,
+
+
+
+                    child: InkWell(
+
+                      onTap: () {
+
+
+                        Navigator.push(
+
+                          context,
+
+                          MaterialPageRoute(
+
+                            builder: (_) =>
+                                AircraftDetailsPage(
+
+                                  plane: plane,
+
+                                ),
+
+                          ),
+
+                        );
+
+
+                      },
+
+
+                      child: Column(
+
+                        mainAxisSize:
+                            MainAxisSize.min,
+
+
+                        children: [
+
+
+
+                          Text(
+
+                            plane.callsign,
+
+
+                            style: const TextStyle(
+
+                              color:
+                                  Color(0xFF6FA8FF),
+
+                              fontSize: 7,
+
+                              fontWeight:
+                                  FontWeight.w500,
+
+                              letterSpacing: 0.4,
+
+                            ),
+
+                          ),
+
+
+
+
+
+                          Container(
+
+                            decoration: BoxDecoration(
+
+                              boxShadow: [
+
+                                BoxShadow(
+
+                                  color:
+                                      const Color(0xFF5C8DFF)
+                                          .withValues(
+
+                                            alpha: 0.35,
+
+                                          ),
+
+                                  blurRadius: 12,
+
+                                  spreadRadius: 2,
+
+                                ),
+
+                              ],
+
+                            ),
+
+
+
+                            child: Transform.rotate(
+
+                              angle: heading,
+
+
+                              child: const Icon(
+
+                                Icons.airplanemode_active,
+
+                                color:
+                                    Color(0xFF5C8DFF),
+
+                                size: 22,
+
+                              ),
+
+                            ),
+
+                          ),
+
+
+
+                        ],
+
+                      ),
+
+                    ),
+
+                  );
+
+
+                }),
+
+
+
+
+
+                // YOU LOCATION
+
+                GestureDetector(
+
+                  onTap: () {
+
+                    _controller.forward(
+                      from: 0,
+                    );
+
+                  },
+
+
+                  child: Column(
+
+                    mainAxisSize:
+                        MainAxisSize.min,
+
+
+                    children: [
+
+
+                      const Text(
+
+                        "YOU",
+
+                        style: TextStyle(
+
+                          color:
+                              Color(0xFF6FA8FF),
+
+                          fontSize: 7,
+
+                          fontWeight:
+                              FontWeight.w500,
+
+                          letterSpacing: 0.4,
+
+                        ),
+
+                      ),
+
+
+
+                      Container(
+
+                        decoration: BoxDecoration(
+
+                          boxShadow: [
+
+                            BoxShadow(
+
+                              color:
+                                  const Color(0xFF5C8DFF)
+                                      .withValues(
+
+                                        alpha: 0.35,
+
+                                      ),
+
+                              blurRadius: 10,
+
+                              spreadRadius: 1,
+
+                            ),
+
+                          ],
+
+                        ),
+
+
+
+                        child: const Icon(
+
+                          Icons.location_on,
+
+                          size: 22,
+
+                          color:
+                              Color(0xFF5C8DFF),
+
+                        ),
+
+                      ),
+
+
+                    ],
+
+                  ),
+
+                ),
+
+
+
+              ],
+
+            );
+
+
+          },
+
+        ),
+
+      ),
+
     );
-    
+
   }
+
 }

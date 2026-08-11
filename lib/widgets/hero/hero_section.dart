@@ -37,8 +37,8 @@ class HeroSection extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  Colors.blue.withOpacity(.10),
-                  Colors.blue.withOpacity(.03),
+                  Colors.blue.withValues(alpha: .10),
+                  Colors.blue.withValues(alpha: .03),
                   Colors.transparent,
                 ],
               ),
@@ -52,7 +52,7 @@ class HeroSection extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Colors.blue.withOpacity(.12),
+                      color: Colors.blue.withValues(alpha: .12),
                       width: 2,
                     ),
                   ),
@@ -63,7 +63,7 @@ class HeroSection extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Colors.blue.withOpacity(.25),
+                      color: Colors.blue.withValues(alpha: .25),
                       width: 2,
                     ),
                   ),
@@ -73,7 +73,7 @@ class HeroSection extends StatelessWidget {
                   height: 80,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.blue.withOpacity(.08),
+                    color: Colors.blue.withValues(alpha: .08),
                   ),
                 ),
                 const Icon(

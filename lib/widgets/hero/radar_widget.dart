@@ -17,8 +17,8 @@ class RadarWidget extends StatelessWidget {
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            const Color(0xFF2F80ED).withOpacity(.10),
-            const Color(0xFF2F80ED).withOpacity(.04),
+            const Color(0xFF2F80ED).withValues(alpha: .10),
+            const Color(0xFF2F80ED).withValues(alpha: .04),
             Colors.transparent,
           ],
         ),
@@ -57,7 +57,7 @@ class RadarWidget extends StatelessWidget {
             height: size * .28,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF2F80ED).withOpacity(.08),
+              color: const Color(0xFF2F80ED).withValues(alpha: .08),
             ),
           ),
 
@@ -79,7 +79,7 @@ class RadarWidget extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: const Color(0xFF2F80ED).withOpacity(.18),
+          color: const Color(0xFF2F80ED).withValues(alpha: .18),
           width: 2,
         ),
       ),

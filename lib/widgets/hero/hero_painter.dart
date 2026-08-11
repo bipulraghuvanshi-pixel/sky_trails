@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 
 class RadarPainter extends CustomPainter {
@@ -23,8 +22,8 @@ class RadarPainter extends CustomPainter {
     final paint = Paint()
       ..shader = RadialGradient(
         colors: [
-          const Color(0xFF2F80ED).withOpacity(.08),
-          const Color(0xFF2F80ED).withOpacity(.03),
+          const Color(0xFF2F80ED).withValues(alpha: .08),
+          const Color(0xFF2F80ED).withValues(alpha: .03),
           Colors.transparent,
         ],
       ).createShader(
@@ -40,7 +39,7 @@ class RadarPainter extends CustomPainter {
     double radius,
   ) {
     final paint = Paint()
-      ..color = const Color(0xFF2F80ED).withOpacity(.16)
+      ..color = const Color(0xFF2F80ED).withValues(alpha: .16)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.8;
 
@@ -54,7 +53,7 @@ class RadarPainter extends CustomPainter {
     Offset center,
   ) {
     final glow = Paint()
-      ..color = const Color(0xFF2F80ED).withOpacity(.10);
+      ..color = const Color(0xFF2F80ED).withValues(alpha: .10);
 
     canvas.drawCircle(center, 24, glow);
 
