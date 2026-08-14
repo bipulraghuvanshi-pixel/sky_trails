@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
+import 'widgets/aircraft/empty_sky_card.dart';
+import 'widgets/location/reference_footer.dart';
+import 'widgets/aircraft/error_card.dart';
 
 import 'models/aircraft.dart';
 import 'screens/aircraft_details_page.dart';
@@ -31,10 +33,9 @@ class SkyTrailsApp extends StatefulWidget {
 }
 
 class _SkyTrailsAppState extends State<SkyTrailsApp> {
-  
-
   String locationText = "Getting location...";
   String lastUpdated = "--";
+  String? errorMessage;
 
   final AircraftService aircraftService = const AircraftService();
   final LocationService locationService = const LocationService();
@@ -42,26 +43,22 @@ class _SkyTrailsAppState extends State<SkyTrailsApp> {
   double? userLat;
   double? userLon;
 
+  LocationData? location;
+
   Timer? refreshTimer;
 
   List<Aircraft> nearbyPlanes = [];
 
   @override
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-  
+    loadData();
 
-  loadData();
-
-  refreshTimer = Timer.periodic(
-    const Duration(minutes: 30),
-    (timer) {
+    refreshTimer = Timer.periodic(const Duration(minutes: 30), (timer) {
       fetchAircraft();
-    },
-  );
-}
-  
+    });
+  }
 
   @override
   void dispose() {
@@ -77,6 +74,7 @@ void initState() {
   Future<void> fetchAircraft() async {
     setState(() {
       lastUpdated = "Refreshing...";
+      errorMessage = null;
     });
 
     try {
@@ -105,8 +103,26 @@ void initState() {
             "${now.hour}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}";
       });
     } catch (e) {
+      String message;
+
+      if (e.toString().contains("RADAR_BUSY")) {
+        message =
+            "The radar is busy right now.\n"
+            "Aircraft data will return shortly.";
+      } else if (e.toString().contains("NETWORK_ERROR")) {
+        message =
+            "Unable to reach aircraft radar.\n"
+            "Check your internet connection.";
+      } else {
+        message =
+            "Aircraft data is temporarily unavailable.\n"
+            "Please try again shortly.";
+      }
+
       setState(() {
         lastUpdated = "ERROR";
+
+        errorMessage = message;
       });
 
       print("Error: $e");
@@ -115,279 +131,321 @@ void initState() {
 
   Future<void> getLocation() async {
     try {
-      print("Checking location...");
+      location = await locationService.getLocation();
 
-      LocationPermission permission =
-          await Geolocator.checkPermission();
-
-      print("Permission before request: $permission");
-
-      permission = await Geolocator.requestPermission();
-
-      print("Permission after request: $permission");
-
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      print("POSITION RECEIVED");
-      print(position.latitude);
-      print(position.longitude);
-
-      userLat = position.latitude;
-      userLon = position.longitude;
-
-      print("User Lat: $userLat");
-      print("User Lon: $userLon");
+      if (location != null) {
+        userLat = location!.latitude;
+        userLon = location!.longitude;
+      }
 
       setState(() {});
     } catch (e) {
       print("LOCATION ERROR: $e");
     }
   }
-    @override
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Sky Trails',
       home: Scaffold(
+        extendBodyBehindAppBar: true,
 
-  extendBodyBehindAppBar: true,
-
-  backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
 
         appBar: AppBar(
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
 
-  systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarIconBrightness: Brightness.dark,
+          ),
 
-    statusBarColor: Colors.transparent,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF6FA8FF)),
 
-    statusBarIconBrightness: Brightness.dark,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
 
-  ),
+          backgroundColor: Colors.transparent,
 
+          surfaceTintColor: Colors.transparent,
 
-  leading: IconButton(
+          elevation: 0,
 
-    icon: const Icon(
-
-      Icons.arrow_back,
-
-      color: Color(0xFF6FA8FF),
-
-    ),
-
-    onPressed: () {
-
-      Navigator.pop(context);
-
-    },
-
-  ),
-
-
-  backgroundColor: Colors.transparent,
-
-  surfaceTintColor: Colors.transparent,
-
-  elevation: 0,
-
-  scrolledUnderElevation: 0,
-
-),
+          scrolledUnderElevation: 0,
+        ),
 
         body: SkyBackground(
-  child: Builder(
-    builder: (context) {
-      return Container(
+          child: Builder(
+            builder: (context) {
+              return Container(
+                color: Colors.transparent,
 
-  color: Colors.transparent,
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
 
-  child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 2),
+                        Transform.translate(
+                          offset: const Offset(0, -20),
 
-                    children: [
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'OVER YOU',
+                                      style: TextStyle(
+                                        fontSize: 34,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 3.0,
+                                        foreground: Paint()
+                                          ..shader =
+                                              const LinearGradient(
+                                                colors: [
+                                                  Color(0xFFB7D6FF),
+                                                  Color(0xFF7BAEFF),
+                                                  Color(0xFF3B82F6),
+                                                ],
+                                              ).createShader(
+                                                const Rect.fromLTWH(
+                                                  0,
+                                                  0,
+                                                  260,
+                                                  0,
+                                                ),
+                                              ),
+                                      ),
+                                    ),
 
-  const SizedBox(height: 2),
+                                    TextSpan(
+                                      text: '  ^',
+                                      style: TextStyle(
+                                        fontSize: 34,
+                                        fontWeight: FontWeight.w500,
+                                        color: const Color(0xFF2563EB),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
 
-  Text(
-    'Over You',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.4,
-                          color: const Color(0xFF0F172A),
+                              const SizedBox(width: 8),
+                            ],
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 4),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Nearby Aircraft',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF294C7A),
+                                ),
+                              ),
 
-                      const SizedBox(height: 5),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
 
-                      Text(
-  'Within 300 km radius',
-  style: TextStyle(
-    fontSize: 13,
-    color: Colors.grey.shade600,
-    letterSpacing: 0.2,
-  ),
-),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFEAF3FF),
 
-const SizedBox(height: 4),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
 
-Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: [
-    const Icon(
-      Icons.circle,
-      size: 9,
-      color: Colors.green,
-    ),
+                                child: Text(
+                                  '${nearbyPlanes.length}',
 
-    const SizedBox(width: 4),
+                                  style: const TextStyle(
+                                    fontSize: 15,
 
-    const Text(
-      'Live',
-      style: TextStyle(
-        fontSize: 11,
-        color: Colors.green,
-        fontWeight: FontWeight.w700,
-      ),
-    ),
-  ],
-),
+                                    fontWeight: FontWeight.w700,
 
-const SizedBox(height: 4),
+                                    color: Color(0xFF294C7A),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
 
-Text(
-  'Updated • $lastUpdated',
-  style: const TextStyle(
-    fontSize: 12,
-    color: Colors.grey,
-  ),
-),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF34A853),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
 
-const SizedBox(height: 30),
+                                  const SizedBox(width: 4),
 
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 20),
-  child: Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: [
-      Flexible(
-        child: ActionCard(
-          icon: Icons.radar,
-          title: 'Radar',
-          subtitle: 'View on map',
-          
-          onTap: () {
-            if (userLat == null || userLon == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Location not available yet'),
-                ),
-              );
-              return;
-            }
+                                  const Text(
+                                    'Live',
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      color: Color(0xFF6BBF7A),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
 
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => RadarPage(
- nearbyPlanes: nearbyPlanes,
- userLat: userLat!,
- userLon: userLon!,
-),
-              ),
-            );
-          },
-        ),
-      ),
+                        const SizedBox(height: 0),
 
-      const SizedBox(width: 14),
+                        Text(
+                          '(within 300 km)',
+                          style: const TextStyle(
+                            fontSize: 9,
+                            color: Color(0x8890B8E8),
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
 
-      Flexible(
-        child: ActionCard(
-          icon: Icons.refresh_rounded,
-          title: 'Refresh',
-          subtitle: 'Update now',
-          
-          onTap: () async {
-            await fetchAircraft();
-          },
-        ),
-      ),
-    ],
-  ),
-),
+                        const SizedBox(height: 4),
 
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 20),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-       Text(
-        'Nearby Aircraft',
-        style: TextStyle(
-  fontSize: 20,
-  fontWeight: FontWeight.bold,
-  color: const Color(0xFF0F172A),
-),
-      ),
+                        // Restore the original visual separation before the
+                        // Radar and Refresh controls.
+                        const SizedBox(height: 30),
 
-      Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 6,
-        ),
-        decoration: BoxDecoration(
-          color: const Color(0xFFEAF3FF),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          '${nearbyPlanes.length}',
-          style: TextStyle(
-  fontSize: 15,
-  fontWeight: FontWeight.bold,
-  
-),
-        ),
-      ),
-    ],
-  ),
-),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: ActionCard(
+                                  icon: Icons.radar,
+                                  title: 'Radar',
+                                  subtitle: 'View on map',
 
-const SizedBox(height: 14),
+                                  onTap: () {
+                                    if (userLat == null || userLon == null) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Location not available yet',
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
 
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: nearbyPlanes.length,
-                        itemBuilder: (context, index) {
-                          return AircraftCard(
-  plane: nearbyPlanes[index],
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => AircraftDetailsPage(
-  plane: nearbyPlanes[index],
-),
-      ),
-    );
-  },
-);
-                          
-                        },
-                      ),
-                    ],
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => RadarPage(
+                                          nearbyPlanes: nearbyPlanes,
+                                          userLat: userLat!,
+                                          userLon: userLon!,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+
+                              const SizedBox(width: 14),
+
+                              Flexible(
+                                child: ActionCard(
+                                  icon: Icons.refresh_rounded,
+                                  title: 'Refresh',
+                                  subtitle: 'Update now',
+
+                                  onTap: () async {
+                                    await fetchAircraft();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+                        Text(
+                          'Updated • $lastUpdated',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF8FAFE8),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        if (errorMessage != null)
+                          ErrorCard(
+                            title:
+                                errorMessage != null &&
+                                    errorMessage!.contains("radar is busy")
+                                ? "Sky data delayed"
+                                : "Sky connection lost",
+
+                            message:
+                                errorMessage ??
+                                "Unable to reach aircraft radar.",
+                          )
+                        else if (nearbyPlanes.isEmpty)
+                          const EmptySkyCard()
+                        else
+                          ListView.builder(
+                            shrinkWrap: true,
+
+                            physics: const NeverScrollableScrollPhysics(),
+
+                            itemCount: nearbyPlanes.length,
+
+                            itemBuilder: (context, index) {
+                              return AircraftCard(
+                                plane: nearbyPlanes[index],
+
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+
+                                    MaterialPageRoute(
+                                      builder: (_) => AircraftDetailsPage(
+                                        plane: nearbyPlanes[index],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        const SizedBox(height: 50),
+
+                        ReferenceFooter(location: location),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
-      ),
       ),
     );
   }

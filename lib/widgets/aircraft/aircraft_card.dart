@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:country_flags/country_flags.dart';
+
 import '../../models/aircraft.dart';
+import '../../utils/country_code_helper.dart';
 
 
 class AircraftCard extends StatelessWidget {
@@ -20,9 +23,11 @@ class AircraftCard extends StatelessWidget {
 
 
 
+ 
+
+
   @override
   Widget build(BuildContext context) {
-
 
     return InkWell(
 
@@ -38,12 +43,10 @@ class AircraftCard extends StatelessWidget {
         ),
 
 
-        padding: const EdgeInsets.all(18),
-
+        padding: const EdgeInsets.all(16),
 
 
         decoration: BoxDecoration(
-
 
           color: Colors.white.withValues(
             alpha: 0.18,
@@ -52,7 +55,6 @@ class AircraftCard extends StatelessWidget {
 
           borderRadius:
               BorderRadius.circular(22),
-
 
 
           border: Border.all(
@@ -64,7 +66,6 @@ class AircraftCard extends StatelessWidget {
             width: 1,
 
           ),
-
 
 
           boxShadow: [
@@ -87,19 +88,14 @@ class AircraftCard extends StatelessWidget {
 
           ],
 
-
         ),
 
 
 
         child: Row(
 
-
           children: [
 
-
-
-            // Aircraft Icon
 
             Container(
 
@@ -144,15 +140,11 @@ class AircraftCard extends StatelessWidget {
 
 
 
-
             const SizedBox(
               width: 18,
             ),
 
 
-
-
-            // Aircraft Info
 
             Expanded(
 
@@ -163,7 +155,6 @@ class AircraftCard extends StatelessWidget {
 
 
                 children: [
-
 
 
                   Text(
@@ -180,12 +171,11 @@ class AircraftCard extends StatelessWidget {
 
 
                       color:
-                          Color(0xFF0F172A),
+                          Color(0xFF294C7A),
 
                     ),
 
                   ),
-
 
 
 
@@ -195,27 +185,22 @@ class AircraftCard extends StatelessWidget {
 
 
 
-
                   Row(
 
                     children: [
 
 
-                      const Text(
+                      CountryFlag.fromCountryCode(
+  CountryCodeHelper.getCode(
+    plane.country,
+  ),
+  height: 16,
+  width: 22,
+),
 
-                        "🌍",
-
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-
-                      ),
-
-
-
-                      const SizedBox(
-                        width: 6,
-                      ),
+const SizedBox(
+  width: 6,
+),
 
 
 
@@ -235,7 +220,7 @@ class AircraftCard extends StatelessWidget {
                             fontSize: 15,
 
                             color:
-                                Color(0xFF475569),
+                                Color(0xFF5F7394),
 
                           ),
 
@@ -259,15 +244,11 @@ class AircraftCard extends StatelessWidget {
 
 
 
-
             const SizedBox(
               width: 10,
             ),
 
 
-
-
-            // Distance Badge
 
             Container(
 
@@ -281,13 +262,12 @@ class AircraftCard extends StatelessWidget {
                   ),
 
 
-
               decoration: BoxDecoration(
 
 
                 color: Colors.white.withValues(
 
-                  alpha: 0.35,
+                  alpha: 0.25,
 
                 ),
 
@@ -302,7 +282,7 @@ class AircraftCard extends StatelessWidget {
 
                   color: Colors.white.withValues(
 
-                    alpha: 0.45,
+                    alpha: 0.35,
 
                   ),
 
@@ -325,14 +305,13 @@ class AircraftCard extends StatelessWidget {
 
                   const Icon(
 
-                    Icons.location_on,
+  Icons.location_on,
 
-                    size: 15,
+  size: 15,
 
-                    color:
-                        Colors.redAccent,
+  color: Color(0xFF5C8DFF),
 
-                  ),
+),
 
 
 
@@ -367,7 +346,6 @@ class AircraftCard extends StatelessWidget {
               ),
 
             ),
-
 
 
           ],

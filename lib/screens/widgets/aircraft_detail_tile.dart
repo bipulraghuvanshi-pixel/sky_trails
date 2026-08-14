@@ -13,71 +13,49 @@ class AircraftDetailTile extends StatelessWidget {
     super.key,
 
     required this.icon,
+
     required this.title,
+
     required this.value,
 
   });
 
 
-
   @override
   Widget build(BuildContext context) {
 
-
     return Container(
 
-      margin: const EdgeInsets.symmetric(
-        vertical: 8,
+      margin: const EdgeInsets.only(
+        bottom: 16,
       ),
 
 
       padding: const EdgeInsets.symmetric(
         horizontal: 18,
-        vertical: 18,
+        vertical: 16,
       ),
 
 
       decoration: BoxDecoration(
 
         color: Colors.white.withValues(
-          alpha: 0.18,
+          alpha: 0.20,
         ),
 
 
-        borderRadius:
-            BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(22),
 
 
         border: Border.all(
 
           color: Colors.white.withValues(
-            alpha: 0.55,
+            alpha: 0.45,
           ),
 
           width: 1,
 
         ),
-
-
-        boxShadow: [
-
-          BoxShadow(
-
-            color: const Color(0xFF5C8DFF)
-                .withValues(
-                  alpha: 0.05,
-                ),
-
-            blurRadius: 25,
-
-            offset: const Offset(
-              0,
-              10,
-            ),
-
-          ),
-
-        ],
 
       ),
 
@@ -88,21 +66,38 @@ class AircraftDetailTile extends StatelessWidget {
         children: [
 
 
-          Icon(
+          Container(
 
-            icon,
+            width: 34,
 
-            color: const Color(0xFF2F80ED),
+            height: 34,
 
-            size: 24,
+
+            decoration: BoxDecoration(
+
+              shape: BoxShape.circle,
+
+
+              color: const Color(0xFFEAF3FF),
+
+            ),
+
+
+            child: Icon(
+
+              icon,
+
+              size: 18,
+
+              color: const Color(0xFF2F80ED),
+
+            ),
 
           ),
 
 
 
-          const SizedBox(
-            width: 16,
-          ),
+          const SizedBox(width: 18),
 
 
 
@@ -115,15 +110,13 @@ class AircraftDetailTile extends StatelessWidget {
 
               style: const TextStyle(
 
-                fontSize: 13,
+                fontSize: 12,
 
-                fontWeight:
-                    FontWeight.w600,
+                fontWeight: FontWeight.w600,
 
-                letterSpacing: 1,
+                letterSpacing: 1.2,
 
-
-                color: Color(0xFF7A8CA5),
+                color: Color(0xFF6E88B5),
 
               ),
 
@@ -133,49 +126,20 @@ class AircraftDetailTile extends StatelessWidget {
 
 
 
-          Container(
+          Text(
 
-            width: 1,
-
-            height: 28,
+            value,
 
 
-            color: Colors.white.withValues(
-              alpha: 0.5,
-            ),
+            style: const TextStyle(
 
-          ),
+              fontSize: 18,
 
+              fontWeight: FontWeight.w700,
 
+              letterSpacing: 0.3,
 
-          const SizedBox(
-            width: 18,
-          ),
-
-
-
-          Expanded(
-
-            child: Text(
-
-              value,
-
-
-              textAlign:
-                  TextAlign.end,
-
-
-              style: const TextStyle(
-
-                fontSize: 22,
-
-                fontWeight:
-                    FontWeight.w700,
-
-
-                color: Color(0xFF0F172A),
-
-              ),
+              color: Color(0xFF294C7A),
 
             ),
 

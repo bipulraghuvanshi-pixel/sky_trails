@@ -41,7 +41,7 @@ class AircraftDetailsPage extends StatelessWidget {
 
         iconTheme: const IconThemeData(
 
-          color: Colors.black,
+          color: Color(0xFF6FA8FF),
 
         ),
 
@@ -52,9 +52,13 @@ class AircraftDetailsPage extends StatelessWidget {
 
           style: TextStyle(
 
-            color: Color(0xFF0F172A),
+            color: Color(0xFF294C7A),
+
+            fontSize: 18,
 
             fontWeight: FontWeight.w600,
+
+            letterSpacing: 0.2,
 
           ),
 
@@ -79,7 +83,7 @@ class AircraftDetailsPage extends StatelessWidget {
 
               Icons.flight,
 
-              size: 38,
+              size: 40,
 
               color: Color(0xFF2F80ED),
 
@@ -101,7 +105,9 @@ class AircraftDetailsPage extends StatelessWidget {
 
                 fontWeight: FontWeight.w700,
 
-                color: Color(0xFF0F172A),
+                letterSpacing: 1.2,
+
+                color: Color(0xFF294C7A),
 
               ),
 
@@ -125,7 +131,7 @@ class AircraftDetailsPage extends StatelessWidget {
 
                   Icons.public,
 
-                  size: 16,
+                  size: 15,
 
                   color: Color(0xFF5C8DFF),
 
@@ -143,9 +149,13 @@ class AircraftDetailsPage extends StatelessWidget {
 
                   style: const TextStyle(
 
-                    fontSize: 16,
+                    fontSize: 15,
 
-                    color: Color(0xFF7A8CA5),
+                    fontWeight: FontWeight.w500,
+
+                    letterSpacing: 0.3,
+
+                    color: Color(0xFF6B7FA3),
 
                   ),
 
@@ -159,7 +169,6 @@ class AircraftDetailsPage extends StatelessWidget {
 
 
             const SizedBox(height: 28),
-
 
 
 
